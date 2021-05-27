@@ -1,0 +1,143 @@
+---
+- name: "Installing Lamp and WordPress on Amazon Linux Servers"
+  become: true
+  hosts: Amazon
+  gather_facts: False
+  vars_files:
+    - lamp_wp_variables.yml
+  vars_prompt:
+    - name: domain_name
+      prompt: "Enter the domain name"
+      private: no
+      default: ansible-wordpress.com  
+  tasks: 
+
+    - name: "Installing httpd, mariadb-server"
+      yum: 
+        name:
+          - httpd
+          - mariadb-server 
+          - MySQL-python  
+        state: present 
+        
+    - name: "Installing PHP"
+      shell: "amazon-linux-extras install php7.4 -y"
+
+
+    - name: "Apache - Creating Httpd Configuration File"
+      template:
+        src: httpd.conf.tmpl
+        dest: /etc/httpd/conf/httpd.conf
+   
+
+    - name: "Apache - Creating VirtualHost"
+      template:
+        src: virtualhost.conf.tmpl
+        dest: "/etc/httpd/conf.d/{{ domain_name }}.conf"
+            
+            
+    - name: "Apache - Creating VirtualHost DocumentRoot"
+      file:
+        path: "/var/www/html/{{ domain_name }}"
+        state: directory 
+        owner: "{{ httpd_user }}"
+        group: "{{ httpd_group }}"
+
+    - name: "Apache - Creating PHP info file"
+      copy:
+        content: "<?php phpinfo(); ?>"
+        dest: "/var/www/html/{{ domain_name }}/info.php"
+        owner: "{{ httpd_user }}"
+        group: "{{ httpd_group }}"  
+
+    - name: "Mariadb - restarting/enabling service"
+      service:
+        name: mariadb
+        state: restarted
+        enabled: true  
+
+    - name: "MySQL Secure Installation - Update Root Password" 
+      ignore_errors: true
+      mysql_user:
+        login_user: "root"
+        login_password: ""
+        user: "root"
+        password: "{{ mysql_root }}"
+        host_all: true
+
+    - name: "MySQL Secure Installation - Removing Anonymous Users"
+      mysql_user:
+        login_user: "root"
+        login_password: "{{ mysql_root }}"
+        user: ""
+        state: absent
+
+    - name: "MySQL Secure Installation - Removing Test Database" 
+      mysql_db:
+        login_user: "root"
+        login_password: "{{ mysql_root }}"
+        name: "test"
+        state: absent
+
+    - name: "MariaDB - Creating Database"
+      mysql_db: 
+        login_user: "root"
+        login_password: "{{ mysql_root }}"
+        name: "{{ wp_db }}"
+        state: present
+
+    - name: "Mariadb - creating WordPress user & password"
+      mysql_user:
+        login_user: "root"
+        login_password: "{{ mysql_root }}"
+        user: "{{ wp_user }}"
+        password: "{{ wp_password }}"
+        host: localhost
+        priv: '{{ wp_db }}.*:ALL'      
+    
+    - name: "WordPress - Downloading Tar File"
+      get_url:
+        url: "{{ wp_url }}"
+        dest: /tmp/wordpress.tar.gz
+
+    - name: "WordPress - Extracting Wordpress.tar"
+      unarchive:
+        src: /tmp/wordpress.tar.gz
+        dest: /tmp/
+        remote_src: true
+            
+    - name: "WordPress - Copying Contents"
+      copy:
+        src: /tmp/wordpress/
+        dest: "/var/www/html/{{  domain_name  }}/"
+        remote_src: true
+        owner: "{{ httpd_user }}"
+        group: "{{ httpd_group }}"
+
+    - name: "WordPress - Creating Config File" 
+      template: 
+        src: wp-config.tmpl
+        dest: "/var/www/html/{{domain_name}}/wp-config.php"   
+        owner: "{{ httpd_user }}"
+        group: "{{ httpd_user }}" 
+
+    - name: "PHP - Creating Custom PHP.ini" 
+      template: 
+        src: .user.ini
+        dest: "/var/www/html/{{  domain_name  }}/"
+        owner: "{{ httpd_user }}"
+        group: "{{ httpd_group }}"    
+         
+    - name: "Restarting Apache"
+      service: 
+        name: httpd
+        state: restarted
+        enabled: true 
+
+    - name: "Post-Installation Clean-Up"
+      file:
+        path: "{{ item }}"
+        state: absent
+      with_items:
+        - /tmp/wordpress
+        - /tmp/wordpress.tar.gz

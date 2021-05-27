@@ -1,0 +1,4 @@
+[Amazon]
+
+172.31.45.132  ansible_user="ec2-user" ansible_port=22 ansible_ssh_private_key_file="ansible2.pem"
+
