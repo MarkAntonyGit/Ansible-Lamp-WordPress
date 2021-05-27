@@ -53,7 +53,7 @@ ansible-playbook -i hosts playbook_lamp_wordpress.yml
 ![](https://i.ibb.co/7KKqrVy/git3.jpg)
 ![](https://i.ibb.co/tzc80BT/2.jpg)
 
-## If you have using a demo website Please use the site for create localhost loading.
-## https://hosts.cx/
+### If you are using a demo website name. Please use the following online tool for checking the website via hosts method or you can use the local hosts file of your PC. 
+### https://hosts.cx/
 
-### Please contact me on markantony.alenchery@gmail.com if  you have any doubts or suggestions. 
+#### Please contact me on markantony.alenchery@gmail.com if  you have any doubts or suggestions. 
