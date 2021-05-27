@@ -27,7 +27,8 @@ Vim keyfile.pem (Add private key file for ansible client servers)
 chmod 600 keyfile.pem
 ```
 -- Sample Hosts File 
- ![](https://i.ibb.co/XXQ3fW2/githosts.jpg)
+
+![](https://i.ibb.co/XXQ3fW2/githosts.jpg)
  
 ##### 3. Edit Variables, Check Connection and Run Play
 ```
@@ -37,6 +38,7 @@ ansible-playbook -i hosts playbook_lamp_wordpress.yml --syntax-check
 ansible-playbook -i hosts playbook_lamp_wordpress.yml
 ```
 --Sample Variables File
+
 ![](https://i.ibb.co/VN65rpC/git4.jpg)
 
 ## Sample Output Screenshots: 
