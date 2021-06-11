@@ -56,5 +56,7 @@ ansible-playbook -i hosts playbook_lamp_wordpress.yml
 ### If you are using a demo website name. Please use the following online tool for checking the website via hosts method or you can use the local hosts file of your PC. 
 ### https://hosts.cx/
 
-#### Please contact me on markantony.alenchery@gmail.com if  you have any doubts or suggestions. 
+### Connect with me
+
+--------<img src="https://img.shields.io/badge/-Mark%20Antony-brightgreen"/> ----------------------------------------------------------------------------------------------------------------------------------- <a href="https://www.linkedin.com/in/profile-markantony/"><img src="https://img.shields.io/badge/-Linkedin%20Profile-blue"/></a> ------------------------------------------------------------------------------------------------------------------------------------ <a href="mailto:markantony.alenchery@gmail.com"><img src="https://img.shields.io/badge/-markantony.alenchery@gmail.com-D14836?style=flat&logo=Gmail&logoColor=white"/></a>-------------------------------------------------------
 
